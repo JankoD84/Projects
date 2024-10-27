@@ -1,0 +1,71 @@
+import os
+import requests
+
+# Initialize variables
+api_key = os.getenv("MIMO_OPENAI_API_KEY")
+url = "https://ai.mimo.org/v1/openai/message"
+headers = {
+    "api-key": api_key
+}
+current_thread_id = None
+threads = []  # Create an empty list to hold thread IDs
+
+# Function to send a message to the OpenAI API
+def send_message(user_message, thread_id):
+    # Create the body dictionary
+    body = {
+        "message": user_message
+    }
+    
+    # Conditionally add threadId to the body if thread_id is not None
+    if thread_id is not None:
+        body["threadId"] = thread_id
+    
+    # Send the POST request to the OpenAI API
+    response = requests.post(url, headers=headers, json=body)
+    
+    # Unpack and return the JSON response
+    return response.json()
+
+# Print welcoming message and instructions
+print("Welcome! Type your message and press Enter to send.")
+print("Type 'exit' to end the program.")
+print("Type 'new' to switch conversation thread.")
+print("Starting a new thread for you.\n")
+
+# Run the conversation loop
+while True:
+    # Take user input
+    user_message = input("You: ")
+    
+    # Check if the user wants to exit the loop
+    if user_message.lower() == 'exit':
+        print("Exiting the chat.")
+        break
+
+    # Check if the user wants to start a new conversation thread
+    elif user_message.lower() == 'new':
+        current_thread_id = None
+        print("Starting a new thread for you.\n")
+        continue  # Skip the rest of the loop and prompt for new input
+
+    # Call the send_message function with the user_message and current_thread_id as parameters
+    response_data = send_message(user_message, current_thread_id)
+
+    # Retrieve values from response_data using .get()
+    latest_message = response_data.get("response")
+    new_thread_id = response_data.get("threadId")
+    
+    # Update current_thread_id
+    if new_thread_id:
+        current_thread_id = new_thread_id
+
+    # Add the current_thread_id to the threads list if it's not already present
+    if current_thread_id and current_thread_id not in threads:
+        threads.append(current_thread_id)
+    
+    # Print the latest message with "GPT: " prefix
+    print(f"GPT: {latest_message}")
+
+# Optionally, print the threads list after exiting the loop
+print("Threads tracked during the session:", threads)

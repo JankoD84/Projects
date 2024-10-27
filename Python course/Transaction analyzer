@@ -1,0 +1,84 @@
+data = [
+  (749.17, "Investment Return"),
+  (-11.54, "Utilities"),
+  (-247.58, "Online Shopping"),
+  (981.17, "Investment Return"),
+  (-410.65, "Rent"),
+  (310.60, "Rent"),
+  (563.70, "Gift"),
+  (220.79, "Salary"),
+  (-49.85, "Car Maintenance"),
+  (308.49, "Salary"),
+  (-205.55, "Car Maintenance"),
+  (870.64, "Salary"),
+  (-881.51, "Utilities"),
+  (518.14, "Salary"),
+  (-264.66, "Groceries")
+]
+
+def print_transactions(transactions):
+  for transaction in transactions:
+    amount, statement = transaction
+    print(f"${amount} - {statement}")
+
+def print_summary(transactions):
+  deposits = [transaction[0] for transaction in transactions if transaction[0] >= 0]
+  total_deposited = sum(deposits)
+  print(f"Total Deposited: ${total_deposited}")
+  
+  withdrawals = [transaction[0] for transaction in transactions if transaction[0] < 0]
+  total_withdrawn = sum(withdrawals)
+  print(f"Total Withdrawn: ${total_withdrawn}")
+  
+  balance = total_deposited + total_withdrawn
+  print(f"Balance: ${balance}")
+
+def analyze_transactions(transactions):
+  # Sort transactions by amount
+  transactions.sort(key=lambda x: x[0])
+  
+  # Find the largest withdrawal and deposit
+  largest_withdrawal = transactions[0]
+  largest_deposit = transactions[-1]
+  
+  # Print the results
+  print(f"Largest Withdrawal: ${largest_withdrawal[0]} - {largest_withdrawal[1]}")
+  print(f"Largest Deposit: ${largest_deposit[0]} - {largest_deposit[1]}")
+  
+  # Filter out deposits
+  deposits = [transaction[0] for transaction in transactions if transaction[0] >= 0]
+  
+  # Calculate total deposit
+  total_deposit = sum(deposits)
+  
+  # Calculate average deposit
+  average_deposit = total_deposit / len(deposits) if deposits else 0
+  
+  # Print average deposit
+  print(f"Average Deposit: ${average_deposit}")
+  
+  # Filter out withdrawals
+  withdrawals = [transaction[0] for transaction in transactions if transaction[0] < 0]
+  
+  # Calculate total withdrawals
+  total_withdrawals = sum(withdrawals)
+  
+  # Calculate average withdrawal
+  average_withdrawal = total_withdrawals / len(withdrawals) if withdrawals else 0
+  
+  # Print average withdrawal
+  print(f"Average Withdrawal: ${average_withdrawal}")
+
+# Main loop
+while True:
+  print("Options: 'print', 'analyze', 'stop'")
+  choice = input("Enter your choice: ")
+  
+  if choice == "print":
+    print_summary(data)
+  elif choice == "analyze":
+    analyze_transactions(data)
+  elif choice == "stop":
+    break
+  else:
+    print("Invalid choice")
